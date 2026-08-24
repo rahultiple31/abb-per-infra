@@ -42,7 +42,6 @@ parameters:
     values:
       - plan
       - apply
-      - destroy
 
 variables:
   terraformVersion: '1.10.0'
@@ -102,15 +101,6 @@ stages:
                   ;;
               esac
 
-              case '${{ parameters.terraformAction }}' in
-                destroy)
-                  TF_PLAN_ACTION_ARGS='-destroy'
-                  ;;
-                *)
-                  TF_PLAN_ACTION_ARGS=''
-                  ;;
-              esac
-
               case '${{ parameters.targetEnvironment }}' in
                 dev)
                   AWS_ROLE_ARN='$(AWS_DEV_OIDC_ROLE_ARN)'
@@ -142,7 +132,7 @@ stages:
 
               terraform fmt -check -recursive ../..
               terraform validate
-              terraform plan ${TF_PLAN_ACTION_ARGS} -var='enabled_modules=["${{ parameters.targetModule }}"]' ${TF_TARGET_ARGS} -out=tfplan
+              terraform plan -var='enabled_modules=["${{ parameters.targetModule }}"]' ${TF_TARGET_ARGS} -out=tfplan
             displayName: Terraform Init, Validate, and Plan
             workingDirectory: $(workingDirectory)
             env:
@@ -156,7 +146,7 @@ stages:
   - stage: apply
     displayName: Apply ${{ parameters.terraformAction }} ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
     dependsOn: plan
-    condition: and(succeeded(), or(eq('${{ parameters.terraformAction }}', 'apply'), eq('${{ parameters.terraformAction }}', 'destroy')), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), eq('${{ parameters.terraformAction }}', 'apply'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - deployment: terraform_apply
         displayName: Terraform Apply ${{ parameters.terraformAction }} ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}

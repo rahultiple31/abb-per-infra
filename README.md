@@ -47,8 +47,7 @@ testing. It creates:
 
 Create an EC2 key pair named `default` in each region before applying the EC2
 test module. AWS will use the selected region's default VPC behavior for this
-simple test instance. Delete the EC2 test module state after pipeline validation
-if it is no longer needed.
+simple test instance.
 
 ## Backend
 
@@ -137,7 +136,7 @@ The pipeline in `azure-pipelines.yml` supports these parameters:
 - `targetEnvironment`: `dev` or `uat`
 - `targetRegion`: `all`, `us-east-1`, `eu-central-1`, or `ap-southeast-1`
 - `targetModule`: `connect` or `ec2`
-- `terraformAction`: `plan`, `apply`, or `destroy`
+- `terraformAction`: `plan` or `apply`
 
 When more modules are added later, add the module name to:
 
@@ -179,4 +178,3 @@ request the OIDC token from Azure DevOps.
 
 
 backendKey: 'terraform-state/${{ parameters.targetEnvironment }}/${{ parameters.targetRegion }}/${{ parameters.targetModule }}/terraform.tfstate'
-

@@ -23,13 +23,13 @@ variable "contact_center_alias" {
 }
 
 variable "enabled_modules" {
-  description = "Infrastructure modules enabled for this Terraform state. Supported values: connect."
+  description = "Infrastructure modules enabled for this Terraform state. Supported values: connect, ec2."
   type        = list(string)
   default     = ["connect"]
 
   validation {
-    condition     = length(setsubtract(toset([for module_name in var.enabled_modules : lower(module_name)]), toset(["connect"]))) == 0
-    error_message = "enabled_modules supports: connect."
+    condition     = length(setsubtract(toset([for module_name in var.enabled_modules : lower(module_name)]), toset(["connect", "ec2"]))) == 0
+    error_message = "enabled_modules supports: connect, ec2."
   }
 }
 

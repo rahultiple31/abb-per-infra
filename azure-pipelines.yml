@@ -33,6 +33,7 @@ parameters:
     default: connect
     values:
       - connect
+      - ec2
 
   - name: terraformAction
     displayName: Terraform action
@@ -41,6 +42,7 @@ parameters:
     values:
       - plan
       - apply
+      - destroy
 
 variables:
   terraformVersion: '1.10.0'
@@ -73,18 +75,39 @@ stages:
                 all:connect)
                   TF_TARGET_ARGS='-target=module.connect_us_east_1[0] -target=module.connect_eu_central_1[0] -target=module.connect_ap_southeast_1[0]'
                   ;;
+                all:ec2)
+                  TF_TARGET_ARGS='-target=module.ec2_test_us_east_1[0] -target=module.ec2_test_eu_central_1[0] -target=module.ec2_test_ap_southeast_1[0]'
+                  ;;
                 us-east-1:connect)
                   TF_TARGET_ARGS='-target=module.connect_us_east_1[0]'
+                  ;;
+                us-east-1:ec2)
+                  TF_TARGET_ARGS='-target=module.ec2_test_us_east_1[0]'
                   ;;
                 eu-central-1:connect)
                   TF_TARGET_ARGS='-target=module.connect_eu_central_1[0]'
                   ;;
+                eu-central-1:ec2)
+                  TF_TARGET_ARGS='-target=module.ec2_test_eu_central_1[0]'
+                  ;;
                 ap-southeast-1:connect)
                   TF_TARGET_ARGS='-target=module.connect_ap_southeast_1[0]'
+                  ;;
+                ap-southeast-1:ec2)
+                  TF_TARGET_ARGS='-target=module.ec2_test_ap_southeast_1[0]'
                   ;;
                 *)
                   echo "Unsupported target region and module combination: ${{ parameters.targetRegion }} ${{ parameters.targetModule }}"
                   exit 1
+                  ;;
+              esac
+
+              case '${{ parameters.terraformAction }}' in
+                destroy)
+                  TF_PLAN_ACTION_ARGS='-destroy'
+                  ;;
+                *)
+                  TF_PLAN_ACTION_ARGS=''
                   ;;
               esac
 
@@ -119,7 +142,7 @@ stages:
 
               terraform fmt -check -recursive ../..
               terraform validate
-              terraform plan -var='enabled_modules=["${{ parameters.targetModule }}"]' ${TF_TARGET_ARGS} -out=tfplan
+              terraform plan ${TF_PLAN_ACTION_ARGS} -var='enabled_modules=["${{ parameters.targetModule }}"]' ${TF_TARGET_ARGS} -out=tfplan
             displayName: Terraform Init, Validate, and Plan
             workingDirectory: $(workingDirectory)
             env:
@@ -131,12 +154,12 @@ stages:
             artifact: $(planArtifactName)
 
   - stage: apply
-    displayName: Apply ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
+    displayName: Apply ${{ parameters.terraformAction }} ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
     dependsOn: plan
-    condition: and(succeeded(), eq('${{ parameters.terraformAction }}', 'apply'), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    condition: and(succeeded(), or(eq('${{ parameters.terraformAction }}', 'apply'), eq('${{ parameters.terraformAction }}', 'destroy')), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
     jobs:
       - deployment: terraform_apply
-        displayName: Terraform Apply ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
+        displayName: Terraform Apply ${{ parameters.terraformAction }} ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
         environment: ${{ parameters.targetEnvironment }}
         pool:
           vmImage: ubuntu-latest

@@ -38,6 +38,18 @@ No VPC, subnet, NAT, route table, S3, Lambda, Lex, DynamoDB, CloudWatch,
 CloudTrail, IAM, API Gateway, Secrets Manager, or Contact Lens modules are part
 of this target.
 
+The disposable EC2 test module can be selected separately for pipeline smoke
+testing. It creates:
+
+- One Ubuntu 22.04 EC2 instance for simple pipeline testing
+- `t3.nano` instance type
+- EC2 key pair name `default`
+
+Create an EC2 key pair named `default` in each region before applying the EC2
+test module. AWS will use the selected region's default VPC behavior for this
+simple test instance. Delete the EC2 test module state after pipeline validation
+if it is no longer needed.
+
 ## Backend
 
 Terraform uses an S3 backend with native S3 state locking:
@@ -124,8 +136,8 @@ The pipeline in `azure-pipelines.yml` supports these parameters:
 
 - `targetEnvironment`: `dev` or `uat`
 - `targetRegion`: `all`, `us-east-1`, `eu-central-1`, or `ap-southeast-1`
-- `targetModule`: `connect`
-- `terraformAction`: `plan` or `apply`
+- `targetModule`: `connect` or `ec2`
+- `terraformAction`: `plan`, `apply`, or `destroy`
 
 When more modules are added later, add the module name to:
 
@@ -164,3 +176,7 @@ AWS_ROLE_SESSION_NAME
 
 Make sure the pipeline can access `System.AccessToken`, because it is used to
 request the OIDC token from Azure DevOps.
+
+
+backendKey: 'terraform-state/${{ parameters.targetEnvironment }}/${{ parameters.targetRegion }}/${{ parameters.targetModule }}/terraform.tfstate'
+

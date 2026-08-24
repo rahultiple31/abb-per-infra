@@ -1,12 +1,6 @@
-trigger:
-  branches:
-    include:
-      - main
+trigger: none
 
-pr:
-  branches:
-    include:
-      - main
+pr: none
 
 parameters:
   - name: targetEnvironment
@@ -54,6 +48,7 @@ variables:
 stages:
   - stage: plan
     displayName: Plan ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
     jobs:
       - job: terraform_plan
         displayName: Terraform Plan ${{ parameters.targetEnvironment }} ${{ parameters.targetRegion }} ${{ parameters.targetModule }}

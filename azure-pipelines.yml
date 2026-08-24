@@ -40,7 +40,7 @@ parameters:
 variables:
   terraformVersion: '1.10.0'
   workingDirectory: 'environments/${{ parameters.targetEnvironment }}'
-  backendBucket: 'company-aws-connect-terraform-state'
+  backendBucket: 'bts-cloud-terraform-state'
   backendKey: 'terraform-state/${{ parameters.targetEnvironment }}/${{ parameters.targetRegion }}/${{ parameters.targetModule }}/terraform.tfstate'
   backendRegion: 'us-east-1'
   planArtifactName: 'terraform-plan-${{ parameters.targetEnvironment }}-${{ parameters.targetRegion }}-${{ parameters.targetModule }}'

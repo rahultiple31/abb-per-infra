@@ -99,7 +99,7 @@ cd environments/dev
 cd environments/uat
 
 terraform init -reconfigure \
-  -backend-config="bucket=company-aws-connect-terraform-state" \
+  -backend-config="bucket=bts-cloud-terraform-state" \
   -backend-config="key=terraform-state/dev/us-east-1/connect/terraform.tfstate" \
   -backend-config="region=us-east-1" \
   -backend-config="encrypt=true"

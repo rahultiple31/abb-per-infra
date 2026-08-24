@@ -115,7 +115,11 @@ stages:
                 exit 1
               fi
 
-              OIDC_RESPONSE="$(curl -sS -H "Authorization: Bearer ${SYSTEM_ACCESSTOKEN}" "${SYSTEM_OIDCREQUESTURI}")"
+              OIDC_RESPONSE="$(curl -sS \
+                -X POST \
+                -H "Authorization: Bearer ${SYSTEM_ACCESSTOKEN}" \
+                -H "Content-Length: 0" \
+                "${SYSTEM_OIDCREQUESTURI}?api-version=7.1-preview.1")"
               OIDC_TOKEN="$(printf '%s' "$OIDC_RESPONSE" | python3 -c 'import json, sys; print(json.load(sys.stdin)["oidcToken"])')"
               AWS_WEB_IDENTITY_TOKEN_FILE="$(Agent.TempDirectory)/aws-oidc-token"
               printf '%s' "$OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"
@@ -185,7 +189,11 @@ stages:
                       exit 1
                     fi
 
-                    OIDC_RESPONSE="$(curl -sS -H "Authorization: Bearer ${SYSTEM_ACCESSTOKEN}" "${SYSTEM_OIDCREQUESTURI}")"
+                    OIDC_RESPONSE="$(curl -sS \
+                      -X POST \
+                      -H "Authorization: Bearer ${SYSTEM_ACCESSTOKEN}" \
+                      -H "Content-Length: 0" \
+                      "${SYSTEM_OIDCREQUESTURI}?api-version=7.1-preview.1")"
                     OIDC_TOKEN="$(printf '%s' "$OIDC_RESPONSE" | python3 -c 'import json, sys; print(json.load(sys.stdin)["oidcToken"])')"
                     AWS_WEB_IDENTITY_TOKEN_FILE="$(Agent.TempDirectory)/aws-oidc-token"
                     printf '%s' "$OIDC_TOKEN" > "$AWS_WEB_IDENTITY_TOKEN_FILE"

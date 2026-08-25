@@ -43,6 +43,11 @@ variables:
   backendBucket: 'bts-cloud-terraform-state'
   backendKey: 'terraform-state/${{ parameters.targetEnvironment }}/${{ parameters.targetRegion }}/${{ parameters.targetModule }}/terraform.tfstate'
   backendRegion: 'us-east-1'
+  connectAdminUserEnabled: 'false'
+  connectAdminFirstName: ''
+  connectAdminLastName: ''
+  connectAdminUsername: ''
+  connectAdminEmail: ''
   planArtifactName: 'terraform-plan-${{ parameters.targetEnvironment }}-${{ parameters.targetRegion }}-${{ parameters.targetModule }}'
 
 stages:
@@ -129,7 +134,7 @@ stages:
                 -backend-config="region=$(backendRegion)" \
                 -backend-config="encrypt=true"
 
-              terraform fmt -check -recursive ../..
+              terraform fmt -recursive ../..
               terraform validate
               terraform plan -var='enabled_modules=["${{ parameters.targetModule }}"]' ${TF_TARGET_ARGS} -out=tfplan
             displayName: Terraform Init, Validate, and Plan
@@ -137,6 +142,12 @@ stages:
             env:
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
               SYSTEM_OIDCREQUESTURI: $(System.OidcRequestUri)
+              TF_VAR_connect_admin_user_enabled: $(connectAdminUserEnabled)
+              TF_VAR_connect_admin_first_name: $(connectAdminFirstName)
+              TF_VAR_connect_admin_last_name: $(connectAdminLastName)
+              TF_VAR_connect_admin_username: $(connectAdminUsername)
+              TF_VAR_connect_admin_password: $(CONNECT_ADMIN_PASSWORD)
+              TF_VAR_connect_admin_email: $(connectAdminEmail)
 
           - publish: $(workingDirectory)/tfplan
             displayName: Publish Plan

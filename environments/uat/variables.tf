@@ -38,3 +38,40 @@ variable "common_tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "connect_admin_user_enabled" {
+  description = "Whether to create an initial Amazon Connect administrator user."
+  type        = bool
+  default     = false
+}
+
+variable "connect_admin_first_name" {
+  description = "First name for the Amazon Connect administrator user."
+  type        = string
+  default     = null
+}
+
+variable "connect_admin_last_name" {
+  description = "Last name for the Amazon Connect administrator user."
+  type        = string
+  default     = null
+}
+
+variable "connect_admin_username" {
+  description = "Username for the Amazon Connect administrator user."
+  type        = string
+  default     = null
+}
+
+variable "connect_admin_password" {
+  description = "Password for the Amazon Connect administrator user. Set this from a secret variable."
+  type        = string
+  default     = null
+  sensitive   = true
+}
+
+variable "connect_admin_email" {
+  description = "Email address for the Amazon Connect administrator user."
+  type        = string
+  default     = null
+}

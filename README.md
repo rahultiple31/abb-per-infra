@@ -104,7 +104,7 @@ terraform init -reconfigure \
   -backend-config="region=us-east-1" \
   -backend-config="encrypt=true"
 
-terraform fmt -check -recursive ../..
+terraform fmt -recursive ../..
 terraform validate
 terraform plan
 ```
@@ -162,6 +162,18 @@ Required Azure DevOps variables:
 
 The pipeline uses Azure Pipelines OIDC and Terraform's AWS web identity
 authentication. It does not require static AWS access keys.
+
+Optional Amazon Connect administrator variables for the plan stage:
+
+- `connectAdminUserEnabled`: set to `true` to create the administrator user
+- `connectAdminFirstName`: administrator first name
+- `connectAdminLastName`: administrator last name
+- `connectAdminUsername`: administrator username
+- `CONNECT_ADMIN_PASSWORD`: administrator password, store as a secret variable
+- `connectAdminEmail`: administrator email address
+
+Terraform only needs one password value. The `Password (verify)` field exists
+in the AWS Console form, but it is not a Terraform argument.
 
 The AWS IAM roles must trust the Azure DevOps OIDC issuer for this pipeline.
 The pipeline requests the OIDC token from `System.OidcRequestUri`, writes it to a

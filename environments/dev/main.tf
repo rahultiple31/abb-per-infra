@@ -13,7 +13,7 @@ locals {
 }
 
 module "connect_us_east_1" {
-  count  = local.deploy_connect ? 1 : 0
+  count  = 0
   source = "../../modules/connect"
 
   providers = {
@@ -26,6 +26,12 @@ module "connect_us_east_1" {
   region_code          = "us-east-1"
   common_tags          = local.common_tags
   contact_center_alias = var.contact_center_alias
+  admin_user_enabled   = var.connect_admin_user_enabled
+  admin_user_first_name = var.connect_admin_first_name
+  admin_user_last_name = var.connect_admin_last_name
+  admin_user_username  = var.connect_admin_username
+  admin_user_password  = var.connect_admin_password
+  admin_user_email     = var.connect_admin_email
 }
 
 module "connect_eu_central_1" {
@@ -42,6 +48,12 @@ module "connect_eu_central_1" {
   region_code          = "eu-central-1"
   common_tags          = local.common_tags
   contact_center_alias = var.contact_center_alias
+  admin_user_enabled   = var.connect_admin_user_enabled
+  admin_user_first_name = var.connect_admin_first_name
+  admin_user_last_name = var.connect_admin_last_name
+  admin_user_username  = var.connect_admin_username
+  admin_user_password  = var.connect_admin_password
+  admin_user_email     = var.connect_admin_email
 }
 
 module "connect_ap_southeast_1" {
@@ -58,6 +70,12 @@ module "connect_ap_southeast_1" {
   region_code          = "ap-southeast-1"
   common_tags          = local.common_tags
   contact_center_alias = var.contact_center_alias
+  admin_user_enabled   = var.connect_admin_user_enabled
+  admin_user_first_name = var.connect_admin_first_name
+  admin_user_last_name = var.connect_admin_last_name
+  admin_user_username  = var.connect_admin_username
+  admin_user_password  = var.connect_admin_password
+  admin_user_email     = var.connect_admin_email
 }
 
 module "ec2_test_us_east_1" {

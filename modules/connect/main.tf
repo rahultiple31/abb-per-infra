@@ -59,6 +59,37 @@ resource "aws_connect_routing_profile" "primary" {
   tags = local.tags
 }
 
+data "aws_connect_security_profile" "admin" {
+  count       = var.admin_user_enabled ? 1 : 0
+  instance_id = aws_connect_instance.this.id
+  name        = "Admin"
+}
+
+resource "aws_connect_user" "admin" {
+  count              = var.admin_user_enabled ? 1 : 0
+  instance_id        = aws_connect_instance.this.id
+  name               = var.admin_user_username
+  password           = var.admin_user_password
+  routing_profile_id = aws_connect_routing_profile.primary.routing_profile_id
+
+  security_profile_ids = [
+    data.aws_connect_security_profile.admin[0].security_profile_id
+  ]
+
+  identity_info {
+    email      = var.admin_user_email
+    first_name = var.admin_user_first_name
+    last_name  = var.admin_user_last_name
+  }
+
+  phone_config {
+    after_contact_work_time_limit = 0
+    phone_type                    = "SOFT_PHONE"
+  }
+
+  tags = local.tags
+}
+
 resource "aws_connect_contact_flow" "placeholder" {
   instance_id = aws_connect_instance.this.id
   name        = "${upper(var.region_code)} Placeholder Inbound Flow"

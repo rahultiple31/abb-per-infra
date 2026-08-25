@@ -7,6 +7,7 @@ output "regional_connect_instances" {
       instance_arn       = try(module.connect_us_east_1[0].instance_arn, null)
       queue_id           = try(module.connect_us_east_1[0].queue_id, null)
       routing_profile_id = try(module.connect_us_east_1[0].routing_profile_id, null)
+      admin_user_id      = try(module.connect_us_east_1[0].admin_user_id, null)
     }
     "eu-central-1" = {
       region             = "eu-central-1"
@@ -14,6 +15,7 @@ output "regional_connect_instances" {
       instance_arn       = try(module.connect_eu_central_1[0].instance_arn, null)
       queue_id           = try(module.connect_eu_central_1[0].queue_id, null)
       routing_profile_id = try(module.connect_eu_central_1[0].routing_profile_id, null)
+      admin_user_id      = try(module.connect_eu_central_1[0].admin_user_id, null)
     }
     "ap-southeast-1" = {
       region             = "ap-southeast-1"
@@ -21,6 +23,7 @@ output "regional_connect_instances" {
       instance_arn       = try(module.connect_ap_southeast_1[0].instance_arn, null)
       queue_id           = try(module.connect_ap_southeast_1[0].queue_id, null)
       routing_profile_id = try(module.connect_ap_southeast_1[0].routing_profile_id, null)
+      admin_user_id      = try(module.connect_ap_southeast_1[0].admin_user_id, null)
     }
   }
 }
